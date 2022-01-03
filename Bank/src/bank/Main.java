@@ -22,6 +22,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+      
         System.out.println("Welcome to the Bank of Waste.");
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your username");
@@ -29,7 +30,7 @@ public class Main {
         userInfo.username = scanner.nextLine();
         System.out.println("Please enter the password for the account associated with " + userInfo.username);
         System.out.print("> ");
-        userInfo.password = new String(System.console().readPassword());
+        userInfo.password = scanner.nextLine();
         System.out.println("Hello " + userInfo.username);
         System.out.println("$" + userInfo.balance);
     }
