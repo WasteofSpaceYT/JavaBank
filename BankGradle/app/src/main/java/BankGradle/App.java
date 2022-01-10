@@ -146,6 +146,7 @@ String password = null;
             create = true;
             } else {
             create = false;
+            return;
             }
             if(create){
                 userInfo.username = username;
@@ -190,8 +191,8 @@ String password = null;
         System.out.println();
         System.out.println("Would you like to:");
         System.out.println("Check balance");
-        print("Make a transfer");
-        print("Check transfer log");
+        print("Make a transaction");
+        print("Check transaction log");
         String ans = input.readLine();
         if(ans.toLowerCase().contains("balance")) {
         System.out.println("$" + userInfo.balance);
