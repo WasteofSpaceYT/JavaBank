@@ -30,6 +30,18 @@ import java.util.concurrent.ExecutionException;
     static String balance;
     static String accn;
     }
+    class transactionmapFormat extends HashMap{
+        String amount;
+        Timestamp timestamp;
+        String to;
+        String type;
+        public transactionmapFormat(String amount, Timestamp timestamp, String to, String type){
+            this.amount = amount;
+            this.timestamp = timestamp;
+            this.to = to;
+            this.type = type;
+        }
+    }
 public class App {
     public static void createAccount(Map<String, Object> users, DocumentReference doc){
         String username = userInfo.username;
@@ -92,22 +104,20 @@ public class App {
             return;
         } else {
         	Map<String, Object> transaction = db.collection("transaction").document(userInfo.username).get().get().getData();
-        	ArrayList<String> newTransaction = new ArrayList<>();
-        	newTransaction.add(from);
-        	newTransaction.add(to);
-        	newTransaction.add(ammount);
-        	newTransaction.add(String.valueOf((new Date()).getTime()));
-        	transaction.put("transaction", newTransaction);
-        	updateDoc(db.collection("transactions").document(String.valueOf((new Date()).getTime())), transaction);
         	// make the transactionhistory item to conform with both the transactionhistory function and the database.
-        	Map fromusermap = (Map) users.get(from);
+        	ArrayList fromusermap = (ArrayList) users.get(from);
         	try {
             	HashMap fromdat = (HashMap) fromusermap.get(3);
             	ArrayList fromdata = (ArrayList) fromdat.get("transactionHistory");
-            	HashMap fromhashmap = new HashMap();
+                transactionmapFormat thing = new transactionmapFormat(ammount, (new Timestamp(new Date().getTime())), to, "give");
+                fromdata.add(thing);
+                fromdat.put(to, thing);
+                fromusermap.add(fromdat);
+                users.put(from, fromusermap);
+                updateDoc((db.collection("userAccounts").document("users")), (Map<String, Object>) users);
             	} catch(Exception IndexOutOfBoundsException) {
             		ArrayList fromdata = new ArrayList();
-            		fromusermap.put("transactionHistory", fromdata);
+            		//fromusermap.put("transactionHistory", fromdata);
             	}
         }
     }
@@ -157,6 +167,7 @@ String password = null;
                 int newaccn = accnminone + 1;
                 userInfo.accn = String.valueOf(newaccn);
                 createAccount(users, userAccounts);
+                main(args);
             }
         } else {
         
@@ -185,7 +196,7 @@ String password = null;
         if(password == null ? userInfo.password == null : password.equals(userInfo.password)){
         } else {
             System.out.println("Incorrect Password.");
-            return;
+            main(args);
         }
         System.out.println("Hello " + userInfo.username);
         System.out.println();
